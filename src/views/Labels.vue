@@ -1,16 +1,11 @@
 <template>
-    <div>
-        Labels.vue
-        <Nav/>
-    </div>
+    <Layout>
+        hello2
+    </Layout>
 </template>
 
-<script>
+<script lang="ts">
     export default {
-        name: "Labels",
+        name: 'Labels',
     };
 </script>
-
-<style scoped>
-
-</style>

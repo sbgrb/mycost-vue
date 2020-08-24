@@ -18,15 +18,17 @@
     import {Component, Watch} from "vue-property-decorator";
     import tagListModel from '@/tagListModel'
     import FormItem from "@/components/Money/FormItem.vue";
+    import recordListModel from "@/recordListModel";
 
     window.localStorage.setItem('version','0.0.1');
 
+    const recordList = recordListModel.fetch();
     const tagList = tagListModel.fetch();
 
     @Component({components: {Tags,FormItem,Types,NumberPad}})
     export default class Money extends Vue{
        tags = tagList;
-       recordList: RecordItem[] =JSON.parse(window.localStorage.getItem('recordList') || '[]') ;
+       recordList: RecordItem[] = recordList;
        record: RecordItem ={tags:[],notes:'',type:'-',amount:0};
         onUpdateTags(value: string[]){
             this.record.tags = value
@@ -39,13 +41,11 @@
         }
 
         saveRecord(){
-            const record2: RecordItem = JSON.parse(JSON.stringify(this.record))
-            record2.createdAt = new Date();
-            this.recordList.push(record2);
+            recordListModel.create(this.record)
         }
         @Watch('recordList')
         onRecordListChanged(){
-            window.localStorage.setItem('recordList',JSON.stringify(this.recordList))
+            recordListModel.save()
         }
 
     }

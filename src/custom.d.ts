@@ -5,3 +5,23 @@ type RecordItem ={
     amount: number;
     createdAt?: Date;
 }
+type Tag ={
+    id: string;
+    name: string;
+}
+type TagListModel = {
+    data: Tag[];
+    fetch: () => Tag[];
+    create: (name: string) => 'success' | 'duplicated';  //success 成功  duplicated 重复
+    save: () => void;
+    remove: (id: string) => boolean;
+    update: (id: string , name: string) => 'success' | 'not found' | 'duplicated';
+}
+
+interface Window {
+    tagList: Tag[];
+    findTag: (id: string) => Tag | undefined;
+    createTag: (name: string) => void;
+    removeTag: (id: string) => boolean;
+    updateTag: (id: string,name: string) => 'success' | 'not found' | 'duplicated';
+}

@@ -6,7 +6,7 @@
             <FormItem field-name="备注" placeholder="在这里输入备注"
                       @update:value = 'onUpdateNotes'/>
         </div>
-        <Tags :data-source.sync="tags" @update:value = 'onUpdateTags'/>
+        <Tags />
     </Layout>
 </template>
 
@@ -15,22 +15,21 @@
     import Tags from "@/components/Money/Tags.vue";
     import Types from "@/components/Money/Types.vue";
     import NumberPad from "@/components/Money/NumberPad.vue";
-    import {Component, Watch} from "vue-property-decorator";
+    import {Component} from "vue-property-decorator";
     import FormItem from "@/components/Money/FormItem.vue";
-    import recordListModel from "@/recordListModel";
+    import store from "@/store/index2";
+
 
     window.localStorage.setItem('version','0.0.1');
 
-    const recordList = recordListModel.fetch();
 
-    @Component({components: {Tags,FormItem,Types,NumberPad}})
+    @Component({components: {Tags,FormItem,Types,NumberPad},
+    computed:{
+        recordList(){return store.recordList}
+    }})
     export default class Money extends Vue{
-       tags = window.tagList;
-       recordList: RecordItem[] = recordList;
+
        record: RecordItem ={tags:[],notes:'',type:'-',amount:0};
-        onUpdateTags(value: string[]){
-            this.record.tags = value
-        }
         onUpdateNotes(value: string){
             this.record.notes = value
         }
@@ -39,11 +38,7 @@
         }
 
         saveRecord(){
-            recordListModel.create(this.record)
-        }
-        @Watch('recordList')
-        onRecordListChanged(){
-            recordListModel.save()
+            store.createRecord(this.record)
         }
 
     }

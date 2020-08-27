@@ -17,19 +17,20 @@
     import NumberPad from "@/components/Money/NumberPad.vue";
     import {Component} from "vue-property-decorator";
     import FormItem from "@/components/Money/FormItem.vue";
-    import store from "@/store/index2";
 
 
     window.localStorage.setItem('version','0.0.1');
 
 
-    @Component({components: {Tags,FormItem,Types,NumberPad},
-    computed:{
-        recordList(){return store.recordList}
-    }})
+    @Component({components: {Tags,FormItem,Types,NumberPad}})
     export default class Money extends Vue{
-
+        get recordList(){
+            return this.$store.state.recordList
+        }
        record: RecordItem ={tags:[],notes:'',type:'-',amount:0};
+       created(){
+           this.$store.commit('fetchRecords')
+       }
         onUpdateNotes(value: string){
             this.record.notes = value
         }
@@ -38,7 +39,7 @@
         }
 
         saveRecord(){
-            store.createRecord(this.record)
+            this.$store.commit('createRecord',this.record)
         }
 
     }

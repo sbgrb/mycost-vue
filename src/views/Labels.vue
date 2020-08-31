@@ -29,13 +29,6 @@
         beforeCreate(){
             this.$store.commit('fetchTags')
         }
-
-        createTag() {
-            const name = window.prompt('请输入标签名');
-            if (name) {
-                // store.createTag(name);
-            }
-        }
     }
 </script>
 

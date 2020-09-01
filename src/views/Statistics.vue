@@ -1,7 +1,7 @@
 <template>
     <Layout>
         <Tabs class-prefix="type" :data-source="recordTypeList" :value.sync="type"/>
-        <ol>
+        <ol v-if="groupedList.length > 0">
             <li v-for="(group,index) in groupedList" :key="index">
                 <h3 class="title">{{beautify(group.title)}}
                 <span>￥{{group.total}}</span>
@@ -16,33 +16,13 @@
                 </ol>
             </li>
         </ol>
+        <div v-else class="noResult">
+            目前没有相关记录
+        </div>
     </Layout>
 </template>
 
-<style scoped lang="scss">
-    %item {
-        padding: 8px 16px;
-        line-height: 24px;
-        display: flex;
-        justify-content: space-between;
-        align-content: center;
-    }
 
-    .title {
-        @extend %item;
-    }
-
-    .record {
-        @extend %item;
-        background: white;
-    }
-
-    .notes {
-        margin-right: auto;
-        margin-left: 8px;
-        color: #999999;
-    }
-</style>
 <script lang="ts">
     import Vue from 'vue'
     import {Component} from "vue-property-decorator";
@@ -72,8 +52,10 @@
         }
 
         tagString(tags: Tag[]) {
-            return tags.length === 0 ? '无' : tags.join('')
+            return tags.length === 0 ? '无' : tags.map(t => t.name).join('，')
         }
+
+
 
         get recordList() {
             return (this.$store.state as RootState).recordList
@@ -81,14 +63,15 @@
 
         get groupedList() {
             const {recordList} = this;
-            if (recordList.length === 0) {
-                return []
-            }
+
             // const hashTable: { title: string; items: RecordItem[] }[]
             const newList = clone(recordList)
                 .filter(r => r.type === this.type)
                 .sort((a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf())
+
+            if (newList.length === 0) {return []}
             type Result = {title: string; total?: number; items: RecordItem[]}[]
+
             const result: Result = [{title: dayjs(newList[0].createdAt).format('YYYY-MM-DD'), items: [newList[0]]}]
             for (let i = 1; i < newList.length; i++) {
                 const current = newList[i]
@@ -117,6 +100,11 @@
 </script>
 
 <style scoped lang="scss">
+    .noResult{
+        padding: 16px;
+        text-align: center;
+        font-size: 24px;
+    }
     ::v-deep {
         .type-tabs-item {
 
@@ -134,5 +122,27 @@
         .interval-tabs-item {
             height: 48px;
         }
+    }
+    %item {
+        padding: 8px 16px;
+        line-height: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-content: center;
+    }
+
+    .title {
+        @extend %item;
+    }
+
+    .record {
+        @extend %item;
+        background: white;
+    }
+
+    .notes {
+        margin-right: auto;
+        margin-left: 8px;
+        color: #999999;
     }
 </style>

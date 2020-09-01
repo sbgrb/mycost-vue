@@ -3,6 +3,7 @@ type RootState = {
     tagList: Tag[];
     currentTag?: Tag;
     creatRecordError: Error | null ;
+    creatTagError: Error | null ;
 }
 type RecordItem ={
     tags: Tag[];
